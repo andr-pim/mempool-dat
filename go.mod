@@ -1,4 +1,4 @@
-module github.com/0xb10c/mempool-dat
+module github.com/andr-pim/mempool-dat
 
 go 1.13
 
