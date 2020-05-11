@@ -64,6 +64,7 @@ func (entry MempoolEntry) Info() string {
 	return fmt.Sprintf("txid: %v, in: %d, out: %d, firstSeen: %d, isSegWit %t", hash, numInputs, numOutputs, firstSeen, isSegWit)
 }
 
+// Tx returns github.com/btcsuite/btcd/wire MsgTx for a given MempoolEntry
 func (entry MempoolEntry) Tx() *wire.MsgTx {
 	return entry.transaction
 }
