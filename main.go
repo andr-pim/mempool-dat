@@ -10,7 +10,7 @@ const path string = "mempool.dat"
 
 func main() {
 	// please handle errors, omitted for brevity
-	mempool, _ := mempoolDat.ReadMempoolFromPath(path)
+	mempool, _ := mempoolDat.ReadMempoolFromPath(path, true)
 
 	// prints the version and number of tx
 	fmt.Println(mempool.GetFileHeader())

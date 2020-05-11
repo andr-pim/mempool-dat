@@ -15,8 +15,7 @@ import (
 )
 
 // ReadMempoolFromPath reads a mempool file from a given path and returns a Mempool type
-func ReadMempoolFromPath(path string) (mem Mempool, err error) {
-
+func ReadMempoolFromPath(path string, readDeltas bool) (mem Mempool, err error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return mem, errors.New("Could not read mempool file: " + err.Error())
@@ -41,15 +40,18 @@ func ReadMempoolFromPath(path string) (mem Mempool, err error) {
 	}
 	mem.entries = entries
 
-	var feeDelta []byte
-	for {
-		remainingBytes, err := r.ReadByte()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			return mem, errors.New("Could not read feeDelta: " + err.Error())
+	if readDeltas {
+		var feeDelta []byte
+		for {
+			remainingBytes, err := r.ReadByte()
+			if err == io.EOF {
+				break
+			} else if err != nil {
+				return mem, errors.New("Could not read feeDelta: " + err.Error())
+			}
+			feeDelta = append(feeDelta, remainingBytes)
 		}
-		feeDelta = append(feeDelta, remainingBytes)
+		mem.mapDeltas = feeDelta
 	}
 
 	return
