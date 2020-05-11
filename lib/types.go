@@ -64,6 +64,10 @@ func (entry MempoolEntry) Info() string {
 	return fmt.Sprintf("txid: %v, in: %d, out: %d, firstSeen: %d, isSegWit %t", hash, numInputs, numOutputs, firstSeen, isSegWit)
 }
 
+func (entry MempoolEntry) Tx() *wire.MsgTx {
+	return entry.transaction
+}
+
 /*  Mempool  */
 
 // Mempool represents a parsed mempool.dat file
