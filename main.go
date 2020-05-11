@@ -33,7 +33,7 @@ func main() {
 }
 
 func readFile(path string) (mempool mempoolDat.Mempool) {
-	mempool, err := mempoolDat.ReadMempoolFromPath(path)
+	mempool, err := mempoolDat.ReadMempoolFromPath(path, true)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
