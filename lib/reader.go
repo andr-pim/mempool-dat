@@ -7,7 +7,7 @@ package lib
 import (
 	"bufio"
 	"encoding/binary"
-	"errors"
+	"fmt"
 	"io"
 	"os"
 
@@ -18,25 +18,25 @@ import (
 func ReadMempoolFromPath(path string, readDeltas bool) (mem Mempool, err error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return mem, errors.New("Could not read mempool file: " + err.Error())
+		return mem, fmt.Errorf("Could not read mempool file: %w", err)
 	}
 	defer file.Close()
 
 	r := bufio.NewReader(file)
 	header, err := readFileHeader(r)
 	if err != nil {
-		return mem, errors.New("Could not read header: " + err.Error())
+		return mem, fmt.Errorf("Could not read header: %w", err)
 	}
 	mem.header = header
 
-	var entries []MempoolEntry
+	entries := make([]MempoolEntry, header.numTx)
 	// for the number of entries specified in the header
 	for i := int64(0); i < header.numTx; i++ {
 		mementry, err := readMempoolEntry(r)
 		if err != nil {
-			return mem, errors.New("Could not read mempoolEntry at index " + string(i) + " : " + err.Error())
+			return mem, fmt.Errorf("Could not read mempoolEntry at index %d :%w", i, err)
 		}
-		entries = append(entries, mementry)
+		entries[i] = mementry
 	}
 	mem.entries = entries
 
@@ -47,7 +47,7 @@ func ReadMempoolFromPath(path string, readDeltas bool) (mem Mempool, err error) 
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				return mem, errors.New("Could not read feeDelta: " + err.Error())
+				return mem, fmt.Errorf("Could not read feeDelta: %w", err)
 			}
 			feeDelta = append(feeDelta, remainingBytes)
 		}
