@@ -73,7 +73,7 @@ func readFileHeader(r *bufio.Reader) (header FileHeader, err error) {
 }
 
 func readMempoolEntry(r *bufio.Reader) (mementry MempoolEntry, err error) {
-	msgTx := wire.NewMsgTx(1) // TODO: check if version 2 is correct
+	msgTx := wire.NewMsgTx(wire.TxVersion)
 	err = msgTx.Deserialize(r)
 	if err != nil {
 		return mementry, err
@@ -96,12 +96,11 @@ func readMempoolEntry(r *bufio.Reader) (mementry MempoolEntry, err error) {
 // reads the next 64bit in Little Endian and returns a int64
 // used here to get the mempoolEntry's timestamp and feeDelta
 func readLEint64(r *bufio.Reader) (res int64, err error) {
-	next64Bit := make([]byte, 8, 8)
-	_, err = io.ReadFull(r, next64Bit)
+	var next64Bit [8]byte
+	_, err = io.ReadFull(r, next64Bit[:])
 	if err != nil {
 		return 0, err
 	}
-
-	res = int64(binary.LittleEndian.Uint64(next64Bit))
+	res = int64(binary.LittleEndian.Uint64(next64Bit[:]))
 	return
 }
